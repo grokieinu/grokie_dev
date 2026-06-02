@@ -59,25 +59,30 @@ async function scanToken() {
         await delay(300);
         doneStep(steps, 2);
 
-        // Step 4: DEX data (DexScreener - CORS friendly, most reliable)
+        // Step 4: DEX data (DexScreener - multiple endpoints)
         setStep(steps, 3);
         let dexData = null;
-        try {
-            // Try new DexScreener API format first
-            let dexResp = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + ca);
-            if (dexResp.ok) {
+        const dexUrls = [
+            'https://api.dexscreener.com/latest/dex/tokens/' + ca,
+            'https://api.dexscreener.com/latest/dex/search?q=' + ca,
+            'https://api.dexscreener.com/token-pairs/v1/solana/' + ca
+        ];
+        for (const dexUrl of dexUrls) {
+            if (dexData) break;
+            try {
+                const dexResp = await fetch(dexUrl);
+                if (!dexResp.ok) continue;
                 const d = await dexResp.json();
-                if (d && d.pairs && d.pairs.length > 0) dexData = d;
-            }
-            // If no pairs found, try search endpoint
-            if (!dexData) {
-                dexResp = await fetch('https://api.dexscreener.com/latest/dex/search?q=' + ca);
-                if (dexResp.ok) {
-                    const d = await dexResp.json();
-                    if (d && d.pairs && d.pairs.length > 0) dexData = d;
+                // Handle different response formats
+                if (d && d.pairs && d.pairs.length > 0) {
+                    dexData = d;
+                } else if (Array.isArray(d) && d.length > 0) {
+                    // New API returns array directly
+                    dexData = { pairs: d };
                 }
-            }
-        } catch(e) { console.warn('DexScreener fetch failed:', e.message); }
+            } catch(e) { continue; }
+        }
+        console.log('DexScreener result:', dexData ? dexData.pairs.length + ' pairs found' : 'no pairs');
         await delay(400);
         doneStep(steps, 3);
 
@@ -302,11 +307,11 @@ function generateDeepReport(ca, mintInfo, supplyData, largestAccounts, ownerProg
 
     if (activePair) {
         const pair = activePair;
-        const liq = pair.liquidity ? (pair.liquidity.usd || 0) : 0;
-        const vol24 = pair.volume ? (pair.volume.h24 || 0) : 0;
+        const liq = pair.liquidity ? (pair.liquidity.usd || pair.liquidity.total || 0) : 0;
+        const vol24 = pair.volume ? (pair.volume.h24 || pair.volume.h24Usd || 0) : 0;
         const age = pair.pairCreatedAt ? Math.floor((Date.now() - pair.pairCreatedAt) / 86400000) : 0;
-        const dexName = pair.dexId || 'Unknown';
-        const priceUsd = parseFloat(pair.priceUsd || 0);
+        const dexName = pair.dexId || pair.dex || 'Unknown';
+        const priceUsd = parseFloat(pair.priceUsd || pair.price || 0);
 
         report.market = { liquidity: liq, volume24h: vol24, age: age, dex: dexName, price: priceUsd };
 
