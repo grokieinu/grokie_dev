@@ -1,12 +1,14 @@
 /**
  * Grokie Inu - AI Token Audit & Trust Score (Deep Analysis)
  * Comprehensive on-chain security scanner for Solana SPL tokens
+ * Uses DexScreener API + Solana RPC with CORS-friendly fallbacks
  */
 
 const RPC_ENDPOINTS = [
-    'https://api.mainnet-beta.solana.com',
     'https://rpc.ankr.com/solana',
-    'https://solana.public-rpc.com'
+    'https://solana-mainnet.rpc.extrnode.com',
+    'https://solana-rpc.publicnode.com',
+    'https://api.mainnet-beta.solana.com'
 ];
 
 let currentRpcIndex = 0;
@@ -15,9 +17,6 @@ let auditData = {};
 // Known program IDs
 const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
 const TOKEN_2022_PROGRAM = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb';
-const RAYDIUM_AMM = '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8';
-const RAYDIUM_CLMM = 'CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK';
-const ORCA_WHIRLPOOL = 'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc';
 
 // === Main Scan Function ===
 async function scanToken() {
@@ -96,17 +95,28 @@ async function rpcCall(method, params) {
     for (let i = 0; i < RPC_ENDPOINTS.length; i++) {
         const rpcUrl = RPC_ENDPOINTS[(currentRpcIndex + i) % RPC_ENDPOINTS.length];
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
             const resp = await fetch(rpcUrl, {
                 method: 'POST',
                 headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({jsonrpc:'2.0', id:1, method, params})
+                body: JSON.stringify({jsonrpc:'2.0', id:1, method, params}),
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
+
             if (!resp.ok) { lastError = new Error('HTTP ' + resp.status); continue; }
             const data = await resp.json();
             if (data.error) { lastError = new Error(data.error.message || 'RPC Error'); continue; }
             currentRpcIndex = (currentRpcIndex + i) % RPC_ENDPOINTS.length;
             return data.result;
-        } catch(e) { lastError = e; continue; }
+        } catch(e) {
+            lastError = e;
+            console.warn('RPC attempt failed (' + rpcUrl + '):', e.message);
+            continue;
+        }
     }
     throw lastError || new Error('All RPC endpoints failed');
 }
@@ -439,13 +449,13 @@ function showError(msg) {
         desc = 'This address is not a valid SPL token mint. Check the address and try again.';
     } else if (msg.includes('429') || msg.includes('rate')) {
         title = 'Rate Limited';
-        desc = 'Too many requests. Wait a few seconds and try again.';
-    } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+        desc = 'Too many requests. Wait 10 seconds and try again.';
+    } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('abort')) {
         title = 'Network Error';
-        desc = 'Could not connect to Solana RPC. Check your internet or try again.';
+        desc = 'Could not connect to Solana RPC. Please check your internet connection and try again. If on mobile, try switching from WiFi to data or vice versa.';
     } else if (msg.includes('All RPC endpoints failed')) {
-        title = 'Connection Failed';
-        desc = 'All RPC nodes unavailable. Please try again shortly.';
+        title = 'All Nodes Busy';
+        desc = 'All Solana RPC nodes are busy or blocked. Please wait 10 seconds and try again.';
     }
     document.getElementById('errorTitle').textContent = title;
     document.getElementById('errorMsg').textContent = desc;

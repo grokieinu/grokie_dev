@@ -8,17 +8,10 @@ mobileMenuBtn.addEventListener('click', () => {
 
 // Close mobile menu when clicking a link (but NOT dropdown toggles)
 document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', (e) => {
-        // Don't close menu if it's the dropdown toggle
-        if (link.classList.contains('nav-dropdown-toggle')) {
-            e.preventDefault();
-            const menu = link.nextElementSibling;
-            if (menu) menu.classList.toggle('show');
-            return;
-        }
+    link.addEventListener('click', () => {
+        // Don't close menu for dropdown toggle (disabled via CSS pointer-events on mobile)
+        if (link.classList.contains('nav-dropdown-toggle')) return;
         navLinks.classList.remove('active');
-        // Close any open dropdown
-        document.querySelectorAll('.nav-dropdown-menu').forEach(m => m.classList.remove('show'));
     });
 });
 
@@ -91,8 +84,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
+        // Skip dropdown toggles
+        if (this.classList.contains('nav-dropdown-toggle')) return;
+        const href = this.getAttribute('href');
+        if (!href || href === '#') return;
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const target = document.querySelector(href);
         if (target) {
             target.scrollIntoView({
                 behavior: 'smooth',

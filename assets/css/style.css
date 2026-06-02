@@ -1003,30 +1003,31 @@ body {
         display: none;
     }
 
-    .nav-dropdown-menu {
-        position: static;
-        background: rgba(22, 22, 46, 0.5);
-        border: none;
-        box-shadow: none;
-        padding: 8px 0 8px 15px;
-        min-width: auto;
-        margin-top: 5px;
-        border-radius: 10px;
-        display: none;
+    .nav-dropdown-toggle {
+        pointer-events: none;
     }
 
-    .nav-dropdown-menu.show {
+    .nav-dropdown-menu {
+        position: static;
         display: block !important;
+        background: none;
+        border: none;
+        box-shadow: none;
+        padding: 5px 0 0 20px;
+        min-width: auto;
+        margin-top: 0;
+        border-radius: 0;
     }
 
     .nav-dropdown-menu a {
-        padding: 10px 15px;
+        padding: 8px 0;
         font-size: 0.95rem;
         color: var(--text);
     }
 
     .nav-dropdown-menu a:hover {
         color: var(--accent);
+        background: none;
     }
 
     .hero {
