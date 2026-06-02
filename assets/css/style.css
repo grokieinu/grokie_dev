@@ -93,6 +93,61 @@ body {
     color: var(--accent);
 }
 
+.nav-dropdown {
+    position: relative;
+}
+
+.nav-dropdown-toggle {
+    cursor: pointer;
+}
+
+.nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--dark-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 0;
+    min-width: 160px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    z-index: 1000;
+    list-style: none;
+    margin-top: 0;
+    padding-top: 15px;
+}
+
+.nav-dropdown::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 15px;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu {
+    display: block;
+}
+
+.nav-dropdown-menu li {
+    padding: 0;
+}
+
+.nav-dropdown-menu a {
+    display: block;
+    padding: 8px 20px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.nav-dropdown-menu a:hover {
+    color: var(--accent);
+    background: rgba(247, 37, 133, 0.05);
+}
+
 .nav-badge-new {
     background: var(--secondary);
     color: #0a0a1a;
@@ -1305,5 +1360,362 @@ body {
     }
     .popup-iframe {
         height: 300px;
+    }
+}
+
+/* Countdown Timer */
+.countdown-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 40px 0 20px;
+    flex-wrap: wrap;
+}
+
+.countdown-item {
+    text-align: center;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 25px;
+    min-width: 100px;
+}
+
+.countdown-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px rgba(0, 245, 255, 0.3);
+}
+
+.countdown-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+}
+
+.countdown-separator {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.countdown-note {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 15px;
+}
+
+/* FAQ */
+.faq-list {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--card-bg);
+}
+
+.faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.3s;
+}
+
+.faq-question:hover {
+    color: var(--accent);
+}
+
+.faq-icon {
+    font-size: 1.5rem;
+    color: var(--accent);
+    transition: transform 0.3s;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 200px;
+    padding: 0 20px 18px;
+}
+
+.faq-answer p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+/* Blog/News */
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.blog-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    transition: all 0.3s;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+    box-shadow: 0 10px 30px rgba(247, 37, 133, 0.1);
+}
+
+.blog-date {
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.blog-card h3 {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.blog-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.blog-link {
+    color: var(--neon-blue);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: color 0.3s;
+}
+
+.blog-link:hover {
+    color: var(--accent);
+}
+
+@media (max-width: 768px) {
+    .countdown-wrapper {
+        gap: 10px;
+    }
+    .countdown-item {
+        min-width: 70px;
+        padding: 15px;
+    }
+    .countdown-value {
+        font-size: 1.8rem;
+    }
+    .countdown-separator {
+        font-size: 1.8rem;
+    }
+    .blog-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Live Price Display */
+.live-price-display {
+    margin-bottom: 30px;
+}
+
+.live-price-label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.live-price-big {
+    display: block;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--neon-blue);
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+    line-height: 1.2;
+}
+
+.live-price-change {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 14px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.live-price-change.up {
+    background: rgba(6, 214, 160, 0.15);
+    color: #06d6a0;
+}
+
+.live-price-change.down {
+    background: rgba(247, 37, 133, 0.15);
+    color: #f72585;
+}
+
+@media (max-width: 768px) {
+    .live-price-big {
+        font-size: 2.2rem;
+    }
+}
+
+/* Supported Wallets */
+.wallets-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.wallet-logo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 25px 30px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: all 0.3s;
+    min-width: 130px;
+}
+
+.wallet-logo-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.15);
+}
+
+.wallet-logo-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+.wallet-logo-card span {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* Top Holders Table */
+.holders-table-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    overflow-x: auto;
+}
+
+.holders-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.holders-table thead {
+    background: var(--dark-light);
+}
+
+.holders-table th {
+    padding: 14px 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.holders-table td {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+}
+
+.holders-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.holders-table tbody tr:hover {
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.holders-table .rank {
+    font-weight: 700;
+    color: var(--accent);
+    width: 40px;
+}
+
+.holders-table .wallet-addr {
+    font-family: monospace;
+    color: var(--neon-blue);
+    font-size: 0.8rem;
+}
+
+.holders-table .balance-val {
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+.holders-table .pct-val {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.holders-note {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 15px;
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .holders-table th,
+    .holders-table td {
+        padding: 10px 10px;
+        font-size: 0.75rem;
+    }
+    .holders-table .wallet-addr {
+        font-size: 0.7rem;
     }
 }
