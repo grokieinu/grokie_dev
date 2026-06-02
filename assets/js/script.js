@@ -6,10 +6,19 @@ mobileMenuBtn.addEventListener('click', () => {
     navLinks.classList.toggle('active');
 });
 
-// Close mobile menu when clicking a link
+// Close mobile menu when clicking a link (but NOT dropdown toggles)
 document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
+    link.addEventListener('click', (e) => {
+        // Don't close menu if it's the dropdown toggle
+        if (link.classList.contains('nav-dropdown-toggle')) {
+            e.preventDefault();
+            const menu = link.nextElementSibling;
+            if (menu) menu.classList.toggle('show');
+            return;
+        }
         navLinks.classList.remove('active');
+        // Close any open dropdown
+        document.querySelectorAll('.nav-dropdown-menu').forEach(m => m.classList.remove('show'));
     });
 });
 
@@ -397,123 +406,3 @@ async function fetchPrice() {
 // Fetch immediately and then every 30 seconds
 fetchPrice();
 setInterval(fetchPrice, 30000);
-
-// ===== Fetch Holders Count =====
-async function fetchHolders() {
-    const holdersEl = document.getElementById('tradeHolders');
-    if (!holdersEl) return;
-
-    // Try multiple sources
-    const endpoints = [
-        'https://api.solscan.io/v2/token/holders?token=' + GROKIE_CA + '&offset=0&size=1',
-        'https://public-api.solscan.io/token/holders?tokenAddress=' + GROKIE_CA + '&offset=0&limit=1'
-    ];
-
-    for (const url of endpoints) {
-        try {
-            const resp = await fetch(url, {
-                headers: { 'Accept': 'application/json', 'Origin': window.location.origin }
-            });
-            if (!resp.ok) continue;
-            const data = await resp.json();
-
-            let total = 0;
-            if (data && data.data && data.data.total) total = data.data.total;
-            else if (data && data.total) total = data.total;
-
-            if (total > 0) {
-                if (total >= 1000) holdersEl.textContent = (total / 1000).toFixed(1) + 'K';
-                else holdersEl.textContent = total.toLocaleString();
-                return;
-            }
-        } catch(e) { continue; }
-    }
-
-    // Fallback: try DexScreener pair info (some pairs have holder count)
-    try {
-        const resp = await fetch(DEXSCREENER_API);
-        if (resp.ok) {
-            const data = await resp.json();
-            if (data.pairs && data.pairs[0] && data.pairs[0].holders) {
-                const h = data.pairs[0].holders;
-                if (h >= 1000) holdersEl.textContent = (h / 1000).toFixed(1) + 'K';
-                else holdersEl.textContent = h.toLocaleString();
-                return;
-            }
-        }
-    } catch(e) {}
-}
-
-fetchHolders();
-setInterval(fetchHolders, 60000);
-
-// ===== Top 10 Holders Table =====
-async function fetchTopHolders() {
-    try {
-        const resp = await fetch('https://api.mainnet-beta.solana.com', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({
-                jsonrpc: '2.0', id: 1,
-                method: 'getTokenLargestAccounts',
-                params: [GROKIE_CA]
-            })
-        });
-        if (!resp.ok) return;
-        const data = await resp.json();
-        if (!data.result || !data.result.value) return;
-
-        const accounts = data.result.value.slice(0, 10);
-
-        // Get total supply for percentage calculation
-        let totalSupply = 1000000000; // fallback
-        try {
-            const supResp = await fetch('https://api.mainnet-beta.solana.com', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({
-                    jsonrpc: '2.0', id: 2,
-                    method: 'getTokenSupply',
-                    params: [GROKIE_CA]
-                })
-            });
-            const supData = await supResp.json();
-            if (supData.result && supData.result.value && supData.result.value.uiAmount) {
-                totalSupply = supData.result.value.uiAmount;
-            }
-        } catch(e) {}
-
-        // Build table HTML
-        const tbody = document.getElementById('holdersBody');
-        if (!tbody) return;
-
-        let html = '';
-        accounts.forEach(function(acc, i) {
-            const addr = acc.address || '';
-            const shortAddr = addr.substring(0, 6) + '...';
-            const balance = parseFloat(acc.uiAmount || acc.amount || 0);
-            const pct = totalSupply > 0 ? ((balance / totalSupply) * 100) : 0;
-
-            let balanceStr;
-            if (balance >= 1e9) balanceStr = (balance / 1e9).toFixed(2) + 'B';
-            else if (balance >= 1e6) balanceStr = (balance / 1e6).toFixed(2) + 'M';
-            else if (balance >= 1e3) balanceStr = (balance / 1e3).toFixed(1) + 'K';
-            else balanceStr = balance.toLocaleString();
-
-            html += '<tr>';
-            html += '<td class="rank">' + (i + 1) + '</td>';
-            html += '<td class="wallet-addr">' + shortAddr + '</td>';
-            html += '<td class="balance-val">' + balanceStr + '</td>';
-            html += '<td class="pct-val">' + pct.toFixed(2) + '%</td>';
-            html += '</tr>';
-        });
-
-        tbody.innerHTML = html;
-
-    } catch(e) {
-        console.warn('fetchTopHolders failed:', e.message);
-    }
-}
-
-fetchTopHolders();
-setInterval(fetchTopHolders, 60000);
