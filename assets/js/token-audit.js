@@ -5,13 +5,11 @@
  */
 
 const RPC_ENDPOINTS = [
-    'https://rpc.ankr.com/solana',
-    'https://solana-mainnet.rpc.extrnode.com',
-    'https://solana-rpc.publicnode.com',
-    'https://api.mainnet-beta.solana.com'
+    'https://mainnet.helius-rpc.com/?api-key=d33d23ca-ca10-4b9b-b231-13043e8f53c5'
 ];
 
 let currentRpcIndex = 0;
+let useProxy = false;
 let auditData = {};
 
 // Known program IDs
@@ -35,32 +33,33 @@ async function scanToken() {
     steps.forEach(s => { document.getElementById(s).classList.remove('active','done'); });
 
     try {
-        // Step 1: Fetch mint account
+        // Step 1: Fetch mint account (RPC - may fail due to CORS)
         setStep(steps, 0);
-        const accountInfo = await rpcCall('getAccountInfo', [ca, {encoding:'jsonParsed'}]);
-        if (!accountInfo || !accountInfo.value) throw new Error('TOKEN_NOT_FOUND');
+        let accountInfo = null;
+        try {
+            accountInfo = await rpcCall('getAccountInfo', [ca, {encoding:'jsonParsed'}]);
+        } catch(e) { console.warn('RPC getAccountInfo failed:', e.message); }
         await delay(300);
         doneStep(steps, 0);
 
-        // Step 2: Get supply, holders, metadata
+        // Step 2: Get supply, holders (RPC - may fail)
         setStep(steps, 1);
         let supplyData = null, largestAccounts = null, signatures = null;
         try { supplyData = await rpcCall('getTokenSupply', [ca]); } catch(e) {}
         try { largestAccounts = await rpcCall('getTokenLargestAccounts', [ca]); } catch(e) {}
-        // Get recent transaction signatures for activity analysis
         try { signatures = await rpcCall('getSignaturesForAddress', [ca, {limit: 20}]); } catch(e) {}
         await delay(300);
         doneStep(steps, 1);
 
-        // Step 3: Deep authority & program analysis
+        // Step 3: Analyze authorities
         setStep(steps, 2);
-        const parsedData = accountInfo.value.data.parsed;
-        const mintInfo = parsedData ? parsedData.info : null;
-        const ownerProgram = accountInfo.value.owner || '';
+        let parsedData = accountInfo && accountInfo.value ? accountInfo.value.data.parsed : null;
+        let mintInfo = parsedData ? parsedData.info : null;
+        let ownerProgram = accountInfo && accountInfo.value ? (accountInfo.value.owner || '') : '';
         await delay(300);
         doneStep(steps, 2);
 
-        // Step 4: Liquidity & market check
+        // Step 4: DEX data (DexScreener - CORS friendly, most reliable)
         setStep(steps, 3);
         let dexData = null;
         try {
@@ -70,7 +69,12 @@ async function scanToken() {
         await delay(400);
         doneStep(steps, 3);
 
-        // Step 5: Generate comprehensive report
+        // Need at least one data source
+        if (!accountInfo && (!dexData || !dexData.pairs || dexData.pairs.length === 0)) {
+            throw new Error('TOKEN_NOT_FOUND');
+        }
+
+        // Step 5: Generate report
         setStep(steps, 4);
         const report = generateDeepReport(ca, mintInfo, supplyData, largestAccounts, ownerProgram, signatures, dexData);
         await delay(300);
@@ -89,36 +93,30 @@ async function scanToken() {
     document.getElementById('scanBtn').disabled = false;
 }
 
-// === RPC Helper with fallback ===
+// === RPC Helper (Helius - CORS enabled) ===
 async function rpcCall(method, params) {
-    let lastError = null;
-    for (let i = 0; i < RPC_ENDPOINTS.length; i++) {
-        const rpcUrl = RPC_ENDPOINTS[(currentRpcIndex + i) % RPC_ENDPOINTS.length];
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const rpcUrl = RPC_ENDPOINTS[0];
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-            const resp = await fetch(rpcUrl, {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({jsonrpc:'2.0', id:1, method, params}),
-                signal: controller.signal
-            });
+    try {
+        const resp = await fetch(rpcUrl, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({jsonrpc:'2.0', id:1, method, params}),
+            signal: controller.signal
+        });
 
-            clearTimeout(timeoutId);
+        clearTimeout(timeoutId);
 
-            if (!resp.ok) { lastError = new Error('HTTP ' + resp.status); continue; }
-            const data = await resp.json();
-            if (data.error) { lastError = new Error(data.error.message || 'RPC Error'); continue; }
-            currentRpcIndex = (currentRpcIndex + i) % RPC_ENDPOINTS.length;
-            return data.result;
-        } catch(e) {
-            lastError = e;
-            console.warn('RPC attempt failed (' + rpcUrl + '):', e.message);
-            continue;
-        }
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        if (data.error) throw new Error(data.error.message || 'RPC Error');
+        return data.result;
+    } catch(e) {
+        clearTimeout(timeoutId);
+        throw e;
     }
-    throw lastError || new Error('All RPC endpoints failed');
 }
 
 // === Deep Report Generator ===
