@@ -63,9 +63,21 @@ async function scanToken() {
         setStep(steps, 3);
         let dexData = null;
         try {
-            const dexResp = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + ca);
-            if (dexResp.ok) dexData = await dexResp.json();
-        } catch(e) {}
+            // Try new DexScreener API format first
+            let dexResp = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + ca);
+            if (dexResp.ok) {
+                const d = await dexResp.json();
+                if (d && d.pairs && d.pairs.length > 0) dexData = d;
+            }
+            // If no pairs found, try search endpoint
+            if (!dexData) {
+                dexResp = await fetch('https://api.dexscreener.com/latest/dex/search?q=' + ca);
+                if (dexResp.ok) {
+                    const d = await dexResp.json();
+                    if (d && d.pairs && d.pairs.length > 0) dexData = d;
+                }
+            }
+        } catch(e) { console.warn('DexScreener fetch failed:', e.message); }
         await delay(400);
         doneStep(steps, 3);
 
@@ -282,10 +294,16 @@ function generateDeepReport(ca, mintInfo, supplyData, largestAccounts, ownerProg
     }
 
     // --- 7. LIQUIDITY & DEX CHECK ---
+    let activePair = null;
     if (dexData && dexData.pairs && dexData.pairs.length > 0) {
-        const pair = dexData.pairs[0];
-        const liq = pair.liquidity ? pair.liquidity.usd : 0;
-        const vol24 = pair.volume ? pair.volume.h24 : 0;
+        // Prefer Solana pairs, then any pair
+        activePair = dexData.pairs.find(p => p.chainId === 'solana') || dexData.pairs[0];
+    }
+
+    if (activePair) {
+        const pair = activePair;
+        const liq = pair.liquidity ? (pair.liquidity.usd || 0) : 0;
+        const vol24 = pair.volume ? (pair.volume.h24 || 0) : 0;
         const age = pair.pairCreatedAt ? Math.floor((Date.now() - pair.pairCreatedAt) / 86400000) : 0;
         const dexName = pair.dexId || 'Unknown';
         const priceUsd = parseFloat(pair.priceUsd || 0);
@@ -344,8 +362,8 @@ function generateDeepReport(ca, mintInfo, supplyData, largestAccounts, ownerProg
             }
         }
     } else {
-        report.checks.push({ text: 'No DEX listing found — token may not be tradeable', status: 'danger', icon: '🚨', category: 'liquidity' });
-        report.risks.push({ text: 'Token is not listed on any known DEX. Cannot be traded.', severity: 'critical' });
+        report.checks.push({ text: 'No DEX listing found — token may not be tradeable', status: 'warning', icon: '⚠️', category: 'liquidity' });
+        report.risks.push({ text: 'Could not find DEX pair data. Token may be very new, unlisted, or DexScreener has not indexed it yet.', severity: 'medium' });
         report.market = { liquidity: 0, volume24h: 0, age: 0, dex: 'None', price: 0 };
     }
 
