@@ -126,7 +126,16 @@ function generateDeepReport(ca, mintInfo, supplyData, largestAccounts, ownerProg
     // --- Token Basic Info ---
     const supply = supplyData && supplyData.value ? supplyData.value : null;
     const decimals = supply ? supply.decimals : (mintInfo ? mintInfo.decimals : 0);
-    const totalSupply = supply ? parseFloat(supply.uiAmountString || 0) : 0;
+    let totalSupply = 0;
+    if (supply) {
+        if (supply.uiAmount !== null && supply.uiAmount !== undefined) {
+            totalSupply = parseFloat(supply.uiAmount);
+        } else if (supply.uiAmountString) {
+            totalSupply = parseFloat(supply.uiAmountString);
+        } else if (supply.amount) {
+            totalSupply = parseInt(supply.amount) / Math.pow(10, supply.decimals || 0);
+        }
+    }
     const rawSupply = supply ? supply.amount : '0';
 
     report.info = {
@@ -199,22 +208,36 @@ function generateDeepReport(ca, mintInfo, supplyData, largestAccounts, ownerProg
 
     // --- 6. HOLDER CONCENTRATION ANALYSIS ---
     const accounts = largestAccounts && largestAccounts.value ? largestAccounts.value : [];
-    const top1Balance = accounts.length > 0 ? parseFloat(accounts[0].uiAmount || 0) : 0;
-    const top5Balance = accounts.slice(0, 5).reduce((s, a) => s + parseFloat(a.uiAmount || 0), 0);
-    const top10Balance = accounts.slice(0, 10).reduce((s, a) => s + parseFloat(a.uiAmount || 0), 0);
+
+    // Helper: get balance from account object (handle different RPC response formats)
+    function getAccountBalance(acc) {
+        if (!acc) return 0;
+        if (acc.uiAmount !== null && acc.uiAmount !== undefined) return parseFloat(acc.uiAmount);
+        if (acc.uiAmountString) return parseFloat(acc.uiAmountString);
+        if (acc.amount && acc.decimals !== undefined) return parseInt(acc.amount) / Math.pow(10, acc.decimals);
+        if (acc.amount) return parseInt(acc.amount) / Math.pow(10, decimals);
+        return 0;
+    }
+
+    const top1Balance = accounts.length > 0 ? getAccountBalance(accounts[0]) : 0;
+    const top5Balance = accounts.slice(0, 5).reduce((s, a) => s + getAccountBalance(a), 0);
+    const top10Balance = accounts.slice(0, 10).reduce((s, a) => s + getAccountBalance(a), 0);
     const top1Pct = totalSupply > 0 ? (top1Balance / totalSupply * 100) : 0;
     const top5Pct = totalSupply > 0 ? (top5Balance / totalSupply * 100) : 0;
     const top10Pct = totalSupply > 0 ? (top10Balance / totalSupply * 100) : 0;
 
     report.holders = {
         count: accounts.length,
-        top1: { address: accounts[0] ? accounts[0].address : '', pct: top1Pct.toFixed(2) },
+        top1: { address: accounts[0] ? accounts[0].address : '', pct: top1Pct.toFixed(2), balance: top1Balance },
         top5Pct: top5Pct.toFixed(2),
         top10Pct: top10Pct.toFixed(2)
     };
 
     // Top holder check
-    if (top1Pct > 80) {
+    if (accounts.length === 0) {
+        report.checks.push({ text: 'Could not fetch holder data', status: 'warning', icon: '⚠️', category: 'holders' });
+        report.score += 2;
+    } else if (top1Pct > 80) {
         report.checks.push({ text: 'Single wallet holds ' + top1Pct.toFixed(1) + '% — EXTREME concentration', status: 'danger', icon: '🚨', category: 'holders' });
         report.risks.push({ text: 'One wallet controls over 80% of supply. Extremely high rug pull risk.', severity: 'critical' });
         report.score += 1;
@@ -232,20 +255,28 @@ function generateDeepReport(ca, mintInfo, supplyData, largestAccounts, ownerProg
     }
 
     // Top 5 concentration
-    if (top5Pct > 90) {
-        report.checks.push({ text: 'Top 5 wallets hold ' + top5Pct.toFixed(1) + '% — very concentrated', status: 'danger', icon: '🚨', category: 'holders' });
-        report.risks.push({ text: 'Top 5 holders control >90% of supply. Coordinated dump is possible.', severity: 'high' });
-    } else if (top5Pct < 60) {
-        report.checks.push({ text: 'Top 5 wallets hold ' + top5Pct.toFixed(1) + '% — healthy spread', status: 'safe', icon: '✅', category: 'holders' });
-        report.score += 5;
+    if (accounts.length >= 5) {
+        if (top5Pct > 90) {
+            report.checks.push({ text: 'Top 5 wallets hold ' + top5Pct.toFixed(1) + '% — very concentrated', status: 'danger', icon: '🚨', category: 'holders' });
+            report.risks.push({ text: 'Top 5 holders control >90% of supply. Coordinated dump is possible.', severity: 'high' });
+        } else if (top5Pct > 60) {
+            report.checks.push({ text: 'Top 5 wallets hold ' + top5Pct.toFixed(1) + '%', status: 'warning', icon: '⚠️', category: 'holders' });
+            report.score += 3;
+        } else if (top5Pct > 0) {
+            report.checks.push({ text: 'Top 5 wallets hold ' + top5Pct.toFixed(1) + '% — healthy spread', status: 'safe', icon: '✅', category: 'holders' });
+            report.score += 5;
+        }
     }
 
     // Number of significant holders
-    const significantHolders = accounts.filter(a => parseFloat(a.uiAmount || 0) > 0).length;
+    const significantHolders = accounts.filter(a => getAccountBalance(a) > 0).length;
     if (significantHolders >= 15) {
         report.checks.push({ text: significantHolders + '+ unique holders detected', status: 'safe', icon: '✅', category: 'holders' });
         report.score += 5;
-    } else if (significantHolders < 5) {
+    } else if (significantHolders >= 5) {
+        report.checks.push({ text: significantHolders + ' holders with balance', status: 'safe', icon: '✅', category: 'holders' });
+        report.score += 3;
+    } else if (significantHolders > 0) {
         report.checks.push({ text: 'Only ' + significantHolders + ' holders — very early or suspicious', status: 'warning', icon: '⚠️', category: 'holders' });
         report.risks.push({ text: 'Very few holders. Token may be brand new, abandoned, or a honeypot.', severity: 'medium' });
     }
