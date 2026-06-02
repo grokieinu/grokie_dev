@@ -235,7 +235,24 @@ function renderList() {
             else if (currentFilter === 'gainers') change = p.priceChange.h6 || p.priceChange.h24 || 0;
             else change = p.priceChange.h1 || p.priceChange.h24 || 0;
         }
-        const pairUrl = p.url || ('https://dexscreener.com/solana/' + (p.pairAddress || ''));
+        const tokenAddr = p.baseToken ? p.baseToken.address : '';
+        const pairAddr = p.pairAddress || '';
+        // Use Birdeye on mobile (avoids DexScreener app deep link issue)
+        // DexScreener app intercepts URL but doesn't open the correct token
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        let pairUrl = '';
+        if (isMobile) {
+            // Birdeye doesn't have an app that intercepts, opens in browser correctly
+            pairUrl = tokenAddr ? 'https://birdeye.so/token/' + tokenAddr + '?chain=solana' : 'https://birdeye.so';
+        } else if (p.url) {
+            pairUrl = p.url;
+        } else if (pairAddr) {
+            pairUrl = 'https://dexscreener.com/solana/' + pairAddr;
+        } else if (tokenAddr) {
+            pairUrl = 'https://dexscreener.com/solana/' + tokenAddr;
+        } else {
+            pairUrl = 'https://dexscreener.com/solana';
+        }
         const createdAt = p.pairCreatedAt || 0;
 
         let priceStr;
