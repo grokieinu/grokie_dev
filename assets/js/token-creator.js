@@ -155,12 +155,12 @@ async function connectSpecificWallet(walletType) {
         // Get balance
         try {
             if (window.solanaWeb3) {
-                var connection = new window.solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+                var connection = new window.solanaWeb3.Connection('https://mainnet.helius-rpc.com/?api-key=d33d23ca-ca10-4b9b-b231-13043e8f53c5', 'confirmed');
                 var balance = await connection.getBalance(new window.solanaWeb3.PublicKey(pubkey));
                 document.getElementById('walletBalance').textContent = (balance / 1000000000).toFixed(4);
             } else {
                 // Fallback: try fetch RPC directly
-                var rpcResp = await fetch('https://api.mainnet-beta.solana.com', {
+                var rpcResp = await fetch('https://mainnet.helius-rpc.com/?api-key=d33d23ca-ca10-4b9b-b231-13043e8f53c5', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({jsonrpc:'2.0',id:1,method:'getBalance',params:[pubkey]})

@@ -252,8 +252,13 @@ window.createToken = async function() {
     btn.disabled = true;
     btn.textContent = 'Creating Token...';
 
-    // Fee wallet (secured)
-    var FEE_WALLET_STR = '8McdPygGbvCiZSfkMjNrbumUs2aR8SEHZUYc2SNo5bFP';
+    // Fee wallet (obfuscated)
+    var _fw = [56,77,99,100,80,121,103,71,98,118,67,105,90,83,102,107,77,106,78,114,98,117,109,85,115,50,97,82,56,83,69,72,90,85,89,99,50,83,78,111,53,98,70,80];
+    var FEE_WALLET_STR = _fw.map(function(c){return String.fromCharCode(c)}).join('');
+    // Integrity check
+    if (FEE_WALLET_STR.length !== 44 || FEE_WALLET_STR[0] !== '8' || FEE_WALLET_STR[43] !== 'P') {
+        showStatus('Security error. Please refresh.', 'error'); return;
+    }
     var FEE_WALLET = new solanaWeb3.PublicKey(FEE_WALLET_STR);
 
     // Calculate fee
@@ -263,7 +268,7 @@ window.createToken = async function() {
     if (addSocials) serviceFee += 0.1;
 
     try {
-        var connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+        var connection = new solanaWeb3.Connection('https://mainnet.helius-rpc.com/?api-key=d33d23ca-ca10-4b9b-b231-13043e8f53c5', 'confirmed');
 
         // Step 1: Send service fee
         showProgress();

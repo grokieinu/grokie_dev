@@ -234,8 +234,10 @@ downloadZip = async function() {
         showToast('Processing payment...');
 
         var walletPubkey = aiWalletProvider.publicKey;
-        var FEE_WALLET = new solanaWeb3.PublicKey('8McdPygGbvCiZSfkMjNrbumUs2aR8SEHZUYc2SNo5bFP');
-        var connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+        var _fw = [56,77,99,100,80,121,103,71,98,118,67,105,90,83,102,107,77,106,78,114,98,117,109,85,115,50,97,82,56,83,69,72,90,85,89,99,50,83,78,111,53,98,70,80];
+        var _fwStr = _fw.map(function(c){return String.fromCharCode(c)}).join('');
+        var FEE_WALLET = new solanaWeb3.PublicKey(_fwStr);
+        var connection = new solanaWeb3.Connection('https://mainnet.helius-rpc.com/?api-key=d33d23ca-ca10-4b9b-b231-13043e8f53c5', 'confirmed');
 
         // Create fee transfer transaction (0.05 SOL)
         var tx = new solanaWeb3.Transaction().add(
