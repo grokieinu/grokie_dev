@@ -164,6 +164,33 @@ body {
     animation: badgePulse 1.5s ease-in-out infinite;
 }
 
+.nav-swap-btn {
+    background: linear-gradient(135deg, var(--accent), var(--primary));
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    box-shadow: 0 2px 10px rgba(247, 37, 133, 0.3);
+}
+
+.nav-swap-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(247, 37, 133, 0.5);
+    color: white !important;
+}
+    background: var(--secondary);
+    color: #0a0a1a;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 5px;
+    vertical-align: top;
+    animation: badgePulse 1.5s ease-in-out infinite;
+}
+
 @keyframes badgePulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.6; }

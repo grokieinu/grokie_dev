@@ -1,0 +1,188 @@
+/* Grokie Swap - Minimal */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --primary: #8b5cf6;
+    --accent: #f72585;
+    --neon-blue: #00f5ff;
+    --dark: #0a0a1a;
+    --dark-light: #12122a;
+    --text: #e8e8f0;
+    --text-muted: #9898b8;
+    --card-bg: #16162e;
+    --border: #2a2a50;
+    --jupiter-plugin-primary: 139, 92, 246;
+    --jupiter-plugin-background: 10, 10, 26;
+    --jupiter-plugin-primaryText: 232, 232, 240;
+    --jupiter-plugin-interactive: 22, 22, 46;
+    --jupiter-plugin-module: 18, 18, 42;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10, 10, 26, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 1.3rem;
+    color: var(--accent);
+}
+
+.logo img {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+}
+
+.back-btn {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.back-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Swap Page - Full centered */
+.swap-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 80px 20px 20px;
+}
+
+/* Widget - Large */
+.swap-widget-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 980px;
+    min-height: 600px;
+    border-radius: 20px;
+    overflow: hidden;
+    transform: scale(1.4);
+    transform-origin: center center;
+}
+
+#jupiter-plugin {
+    width: 100%;
+    min-height: 600px;
+}
+
+.swap-loading {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    gap: 12px;
+}
+
+.swap-loading p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.loading-spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Fallback */
+.fallback-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--accent), var(--primary));
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.retry-btn {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    color: var(--text);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    z-index: 9999;
+}
+
+/* Jupiter Logo Override */
+#jupiter-plugin img[src*="jup"],
+#jupiter-plugin img[src*="jupiter"],
+#jupiter-plugin img[alt*="Jupiter"] {
+    content: url('../images/grokie-inu.png') !important;
+    border-radius: 50% !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .swap-widget-wrapper { transform: scale(1.2); }
+}
+
+@media (max-width: 600px) {
+    .swap-page { padding: 70px 10px 10px; }
+    .swap-widget-wrapper { max-width: 100%; min-height: 500px; transform: scale(1); }
+    #jupiter-plugin { min-height: 500px; }
+}
