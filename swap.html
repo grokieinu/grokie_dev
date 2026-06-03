@@ -22,6 +22,50 @@
     </header>
 
     <div class="swap-page">
+        <!-- Wallet Not Detected Notification -->
+        <div class="wallet-notif" id="walletNotif" style="display:none">
+            <div class="wallet-notif-content">
+                <div class="wallet-notif-icon">🔌</div>
+                <h3>Wallet Not Detected</h3>
+                <p class="wallet-notif-desc">To perform a swap, you need a Solana wallet connected to your browser.</p>
+                <div class="wallet-steps">
+                    <div class="wallet-step">
+                        <span class="step-number">1</span>
+                        <div class="step-info">
+                            <strong>Install Wallet Extension</strong>
+                            <p>Download and install one of the following wallets:</p>
+                            <div class="wallet-links">
+                                <a href="https://phantom.app/download" target="_blank" class="wallet-link">
+                                    <img src="assets/images/phantom.png" alt="Phantom" width="20" height="20"> Phantom
+                                </a>
+                                <a href="https://solflare.com/download" target="_blank" class="wallet-link">
+                                    <img src="assets/images/Solflare.png" alt="Solflare" width="20" height="20"> Solflare
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wallet-step">
+                        <span class="step-number">2</span>
+                        <div class="step-info">
+                            <strong>Create or Import Wallet</strong>
+                            <p>Create a new wallet or import an existing one using your seed phrase.</p>
+                        </div>
+                    </div>
+                    <div class="wallet-step">
+                        <span class="step-number">3</span>
+                        <div class="step-info">
+                            <strong>Refresh This Page</strong>
+                            <p>After the wallet is installed, refresh this page to start swapping.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="wallet-notif-actions">
+                    <button onclick="location.reload()" class="wallet-btn-refresh">↻ Refresh Page</button>
+                    <button onclick="dismissWalletNotif()" class="wallet-btn-dismiss">Close</button>
+                </div>
+            </div>
+        </div>
+
         <div class="swap-widget-wrapper">
             <div id="jupiter-plugin"></div>
             <div class="swap-loading" id="swapLoading">
@@ -36,124 +80,6 @@
         <span id="toastMsg"></span>
     </div>
 
-    <script>
-        // ===== KONFIGURASI =====
-        const REFERRAL_ACCOUNT = ''; // ISI DENGAN REFERRAL ACCOUNT ADDRESS DARI referral.jup.ag
-        const REFERRAL_FEE_BPS = 50; // 0.5% fee per swap
-        const GROKIE_MINT = 'A1zgiEn7j53myGBLQ1b4ccdeMJsbjiXTaidSrsjoFTRv';
-        const SOL_MINT = 'So11111111111111111111111111111111111111112';
-        // =======================
-
-        let jupiterRetries = 0;
-        const MAX_RETRIES = 15;
-
-        window.onload = function() { waitForJupiter(); };
-
-        function waitForJupiter() {
-            if (window.Jupiter) {
-                initJupiter();
-            } else if (jupiterRetries < MAX_RETRIES) {
-                jupiterRetries++;
-                setTimeout(waitForJupiter, 800);
-            } else {
-                showFallback();
-            }
-        }
-
-        function initJupiter() {
-            document.getElementById('swapLoading').style.display = 'none';
-
-            // Build config
-            const config = {
-                displayMode: "integrated",
-                integratedTargetId: "jupiter-plugin",
-                formProps: {
-                    initialInputMint: SOL_MINT,
-                    initialOutputMint: GROKIE_MINT,
-                    initialAmount: "",
-                },
-                branding: {
-                    logoUri: "assets/images/grokie-inu.png",
-                    name: "Grokie Swap",
-                },
-                onSuccess: ({ txid }) => {
-                    showToast('Swap berhasil! TX: ' + txid.slice(0, 8) + '...');
-                },
-                onSwapError: ({ error }) => {
-                    console.error('Swap error:', error);
-                    showToast('Swap gagal. Silakan coba lagi.');
-                }
-            };
-
-            // Aktifkan fee jika referral account sudah diisi
-            if (REFERRAL_ACCOUNT && REFERRAL_ACCOUNT.length > 30) {
-                config.formProps.referralAccount = REFERRAL_ACCOUNT;
-                config.formProps.referralFee = REFERRAL_FEE_BPS;
-            }
-
-            try {
-                window.Jupiter.init(config);
-                overrideJupiterBranding();
-            } catch (err) {
-                console.error('Jupiter init error:', err);
-                showFallback();
-            }
-        }
-
-        function showFallback() {
-            document.getElementById('swapLoading').innerHTML = `
-                <div style="text-align:center;padding:40px 20px;">
-                    <p style="color:#f59e0b;font-size:1.1rem;margin-bottom:15px;">⚠️ Widget tidak dapat dimuat</p>
-                    <p style="color:#9898b8;font-size:0.85rem;margin-bottom:20px;">Pastikan Anda membuka halaman ini melalui web server (bukan file://). Wallet extension (Phantom/Solflare) harus terinstall.</p>
-                    <a href="https://jup.ag/swap/SOL-${GROKIE_MINT}" target="_blank" 
-                       style="display:inline-block;padding:14px 30px;background:linear-gradient(135deg,#f72585,#8b5cf6);color:white;text-decoration:none;border-radius:50px;font-weight:700;font-size:1rem;">
-                        Swap di Jupiter.ag
-                    </a>
-                    <br>
-                    <button onclick="location.reload()" 
-                            style="margin-top:12px;padding:10px 20px;background:transparent;color:#9898b8;border:1px solid #2a2a50;border-radius:8px;cursor:pointer;font-size:0.85rem;">
-                        ↻ Coba Lagi
-                    </button>
-                </div>
-            `;
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMsg').textContent = msg;
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 4000);
-        }
-
-        function overrideJupiterBranding() {
-            const container = document.getElementById('jupiter-plugin');
-            const logo = 'assets/images/grokie-inu.png';
-
-            function replace(root) {
-                root.querySelectorAll('img').forEach(img => {
-                    const s = (img.src || '').toLowerCase();
-                    const a = (img.alt || '').toLowerCase();
-                    if (s.includes('jup') || s.includes('jupiter') || a.includes('jupiter')) {
-                        img.src = logo;
-                        img.alt = 'Grokie Swap';
-                        img.style.borderRadius = '50%';
-                    }
-                });
-                root.querySelectorAll('span, p, div, a').forEach(el => {
-                    if (el.children.length === 0 && el.textContent.trim() === 'Jupiter') {
-                        el.textContent = 'Grokie Swap';
-                    }
-                });
-            }
-
-            setTimeout(() => replace(container), 2000);
-            setTimeout(() => replace(container), 4000);
-            setTimeout(() => replace(container), 6000);
-
-            const obs = new MutationObserver(() => replace(container));
-            obs.observe(container, { childList: true, subtree: true });
-            setTimeout(() => obs.disconnect(), 30000);
-        }
-    </script>
+    <script src="assets/js/swap.js"></script>
 </body>
 </html>
