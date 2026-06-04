@@ -694,11 +694,12 @@ body {
     top: 0; left: 0; right: 0; bottom: 0;
     z-index: 9000;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     background: rgba(10, 10, 26, 0.98);
     backdrop-filter: blur(20px);
     padding: 20px;
+    overflow-y: auto;
 }
 
 .token-gate-content {
@@ -710,6 +711,7 @@ body {
     border-radius: 24px;
     padding: 48px 36px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.08);
+    margin: 40px 0;
 }
 
 .gate-logo {

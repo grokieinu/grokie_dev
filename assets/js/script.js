@@ -8,10 +8,26 @@ if (mobileMenuBtn) {
     });
 }
 
+// Mobile dropdown toggle (touch devices)
+document.querySelectorAll('.nav-dropdown-toggle').forEach(toggle => {
+    toggle.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+            e.preventDefault();
+            const dropdown = toggle.closest('.nav-dropdown');
+            // Close other dropdowns
+            document.querySelectorAll('.nav-dropdown').forEach(d => {
+                if (d !== dropdown) d.classList.remove('open');
+            });
+            dropdown.classList.toggle('open');
+        }
+    });
+});
+
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
         if (link.classList.contains('nav-dropdown-toggle')) return;
         navLinks.classList.remove('active');
+        document.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('open'));
     });
 });
 

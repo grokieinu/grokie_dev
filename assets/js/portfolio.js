@@ -1,8 +1,8 @@
 // ===== CONFIGURATION =====
-const HELIUS_API_KEY = 'd33d23ca-ca10-4b9b-b231-13043e8f53c5';
-const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
-const HELIUS_API = `https://api.helius.xyz/v0`;
-const GROQ_API_KEY = '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'; // FILL WITH YOUR GROQ API KEY from https://console.groq.com/keys
+const HELIUS_API_KEY = window.__gk ? window.__gk.h() : '';
+const HELIUS_RPC = window.__gk ? window.__gk.r() : '';
+const HELIUS_API = window.__gk ? window.__gk.a() : '';
+const GROQ_API_KEY = window.__gk ? window.__gk.g() : '';
 // ==========================
 
 // ===== STATE =====

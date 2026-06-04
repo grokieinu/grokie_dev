@@ -3,7 +3,7 @@
  * Main logic: form handling, AI generation via Groq, result display
  */
 
-const GROQ_API_KEY_ENGINE = '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'; // FILL WITH YOUR GROQ API KEY from https://console.groq.com/keys
+const GROQ_API_KEY_ENGINE = window.__gk ? window.__gk.g() : '';
 
 let logoDataUrl = '';
 let projectData = {};
