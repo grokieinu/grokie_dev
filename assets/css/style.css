@@ -27,7 +27,7 @@ body {
     overflow-x: hidden;
 }
 
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; width: 100%; }
 
 /* ===== ANIMATED BACKGROUND CANVAS ===== */
 #bgCanvas {
@@ -73,8 +73,9 @@ body {
     border-bottom: 1px solid var(--border);
     padding: 12px 0;
     transition: all 0.3s;
+    overflow: visible;
 }
-.nav-container { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1001; }
+.nav-container { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1001; width: 100%; }
 .logo {
     display: flex; align-items: center; gap: 10px;
     text-decoration: none; font-weight: 900; font-size: 1.25rem;
@@ -313,9 +314,10 @@ h2 {
     .stats-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 960px) {
+    .nav-container { padding: 0 16px; }
     .nav-links { display: none !important; position: absolute; top: 100%; left: 0; right: 0; background: rgba(5,5,16,0.98); backdrop-filter: blur(20px); flex-direction: column; padding: 20px; gap: 8px; border-bottom: 1px solid var(--border); z-index: 999; }
-    .nav-links.active { display: flex !important; }
-    .mobile-menu-btn { display: block !important; }
+    .nav-links.active { display: flex !important; flex-direction: column; }
+    .mobile-menu-btn { display: flex !important; align-items: center; justify-content: center; }
     .nav-dropdown-menu { position: static; box-shadow: none; border: none; background: transparent; padding-left: 16px; display: none; }
     .nav-dropdown:hover .nav-dropdown-menu { display: block; }
     .nav-dropdown.open .nav-dropdown-menu { display: block; }
