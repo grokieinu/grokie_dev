@@ -68,7 +68,7 @@ async function connectAndVerify() {
     // Check for wallet providers
     const provider = getWalletProvider();
     if (!provider) {
-        status.innerHTML = '<span class="gate-error">❌ No Solana wallet detected. Please install <a href="https://phantom.app" target="_blank">Phantom</a> or <a href="https://solflare.com" target="_blank">Solflare</a>.</span>';
+        status.innerHTML = '<span class="gate-error">❌ No Solana wallet detected. Please install <a href="https://phantom.app" target="_blank">Phantom</a>, <a href="https://solflare.com" target="_blank">Solflare</a>, or <a href="https://trustwallet.com" target="_blank">Trust Wallet</a>.</span>';
         return;
     }
 
@@ -129,8 +129,9 @@ async function connectAndVerify() {
 function getWalletProvider() {
     if (window.solana && window.solana.isPhantom) return window.solana;
     if (window.solflare && window.solflare.isSolflare) return window.solflare;
+    if (window.trustwallet && window.trustwallet.solana) return window.trustwallet.solana;
     if (window.backpack) return window.backpack;
-    if (window.solana) return window.solana;
+    if (window.solana) return window.solana; // Fallback: any Solana provider (includes Trust Wallet injected as window.solana)
     return null;
 }
 
