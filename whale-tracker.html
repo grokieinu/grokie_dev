@@ -23,6 +23,28 @@
         </div>
     </header>
 
+    <!-- Token Gate Overlay -->
+    <div class="token-gate" id="tokenGate">
+        <div class="token-gate-content">
+            <img src="assets/images/grokie-inu.png" alt="Grokie Inu" class="gate-logo">
+            <h2>Grokie Army Only</h2>
+            <p class="gate-desc">Whale Tracker is exclusive to $GROKIE holders. Connect your wallet to verify access.</p>
+            <div class="gate-security">
+                <div class="security-badge">🔒 Read-Only Access</div>
+                <div class="security-badge">🛡️ No Transaction Required</div>
+                <div class="security-badge">✅ No Approval Needed</div>
+            </div>
+            <button id="gateConnectBtn" class="gate-connect-btn">🔗 Connect Wallet</button>
+            <div class="gate-status" id="gateStatus"></div>
+            <p class="gate-trust-note">We only check your token balance. We cannot access, move, or spend your funds. No transaction signature is required.</p>
+            <div class="gate-info">
+                <p>Don't have $GROKIE yet?</p>
+                <a href="swap.html" class="gate-buy-btn">🚀 Buy $GROKIE on Grokie Swap</a>
+            </div>
+            <p class="gate-note">Minimum: 1 $GROKIE token required</p>
+        </div>
+    </div>
+
     <section class="hero">
         <h1>🐋 Whale Tracker</h1>
         <p>Track top holders and whale activity for any Solana token in real-time.</p>
@@ -62,6 +84,7 @@
         </div>
     </div>
 
+    <script src="assets/js/token-gate.js"></script>
     <script src="assets/js/whale-tracker.js"></script>
 </body>
 </html>
