@@ -270,18 +270,20 @@ h2 {
     background: linear-gradient(to bottom, var(--accent), var(--primary), var(--cyan));
     border-radius: 3px; box-shadow: 0 0 10px var(--glow-pink);
 }
-.roadmap-item { position: relative; margin-bottom: 32px; padding-left: 10px; }
+.roadmap-item { position: relative; margin-bottom: 32px; padding-left: 10px; padding-top: 0; }
 .roadmap-marker {
-    position: absolute; left: -40px; top: -28px;
+    display: inline-block;
     background: linear-gradient(135deg, var(--accent), var(--primary));
     color: #fff; padding: 5px 14px; border-radius: 50px; font-size: 0.68rem; font-weight: 700;
     box-shadow: 0 3px 10px rgba(247,37,133,0.3);
     white-space: nowrap;
+    margin-left: 14px;
+    margin-bottom: 8px;
 }
 .roadmap-card {
     background: var(--card); backdrop-filter: blur(12px);
     border: 1px solid var(--border); border-radius: 16px; padding: 24px;
-    margin-left: 14px; margin-top: 10px; transition: all 0.4s;
+    margin-left: 14px; transition: all 0.4s;
 }
 .roadmap-card:hover { border-color: var(--border-hover); transform: translateX(6px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 .roadmap-card h3 { font-size: 1rem; margin-bottom: 12px; color: var(--text); }
