@@ -106,9 +106,15 @@ async function connectAndVerify() {
                 if (heroSection) heroSection.style.display = '';
                 if (container) container.style.display = '';
 
-                // Pre-fill wallet input if exists
+                // Pre-fill wallet input and lock it
                 const walletInput = document.getElementById('walletInput');
-                if (walletInput) walletInput.value = walletAddress;
+                if (walletInput) {
+                    walletInput.value = walletAddress;
+                    walletInput.readOnly = true;
+                    walletInput.style.opacity = '0.85';
+                    walletInput.style.cursor = 'not-allowed';
+                    walletInput.title = 'Wallet address is locked to your verified $GROKIE wallet';
+                }
             }, 1200);
         } else {
             status.innerHTML = '<span class="gate-error">❌ No $GROKIE found in this wallet. You need at least ' + MIN_GROKIE_BALANCE + ' $GROKIE to access this tool.</span>';

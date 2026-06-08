@@ -51,6 +51,25 @@ function initWalletInput() {
     const input = document.getElementById('walletInput');
     const btn = document.getElementById('trackBtn');
 
+    // Auto-fill from verified gate wallet and make it readonly
+    const gateData = sessionStorage.getItem('grokie_gate');
+    if (gateData) {
+        try {
+            const parsed = JSON.parse(gateData);
+            if (parsed.verified && parsed.wallet && parsed.expiry > Date.now()) {
+                input.value = parsed.wallet;
+                input.readOnly = true;
+                input.style.opacity = '0.85';
+                input.style.cursor = 'not-allowed';
+                input.title = 'Wallet address is locked to your verified $GROKIE wallet';
+                // Auto-track after a short delay to let page render
+                setTimeout(() => trackWallet(), 500);
+            }
+        } catch (e) {
+            console.warn('Failed to parse gate data:', e);
+        }
+    }
+
     btn.addEventListener('click', () => trackWallet());
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') trackWallet();
