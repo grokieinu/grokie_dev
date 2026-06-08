@@ -1,5 +1,5 @@
 // ===== TOKEN GATE - $GROKIE HOLDER VERIFICATION =====
-const GROKIE_MINT_ADDRESS = 'A1zgiEn7j53myGBLQ1b4ccdeMJsbjiXTaidSrsjoFTRv';
+const GROKIE_MINT_ADDRESS = window.__gk ? window.__gk.ca() : '';
 const HELIUS_RPC_GATE = window.__gk ? window.__gk.r() : '';
 const MIN_GROKIE_BALANCE = 1; // Minimum tokens required
 const GATE_EXPIRY_HOURS = 1; // Verification valid for 1 hour

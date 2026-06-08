@@ -1,8 +1,8 @@
 // ===== CONFIGURATION =====
-const REFERRAL_ACCOUNT = 'BW3zX4noKZdgdUDcf19kVzR2kBgeKaXA29K7WLBRbqRi'; // FILL WITH YOUR REFERRAL ACCOUNT ADDRESS FROM referral.jup.ag
+const REFERRAL_ACCOUNT = window.__gk ? window.__gk.ra() : '';
 const REFERRAL_FEE_BPS = 50; // 0.5% fee per swap
-const GROKIE_MINT = 'A1zgiEn7j53myGBLQ1b4ccdeMJsbjiXTaidSrsjoFTRv';
-const SOL_MINT = 'So11111111111111111111111111111111111111112';
+const GROKIE_MINT = window.__gk ? window.__gk.ca() : '';
+const SOL_MINT = window.__gk ? window.__gk.sm() : 'So11111111111111111111111111111111111111112';
 // ==========================
 
 let jupiterRetries = 0;

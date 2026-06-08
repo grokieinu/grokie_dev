@@ -44,7 +44,7 @@ window.addEventListener('scroll', () => {
 });
 
 // ===== Live Price Data =====
-const GROKIE_MINT = 'A1zgiEn7j53myGBLQ1b4ccdeMJsbjiXTaidSrsjoFTRv';
+const GROKIE_MINT = window.__gk ? window.__gk.ca() : '';
 
 async function fetchLiveData() {
     try {

@@ -85,6 +85,11 @@ function initButtons() {
 
 // ===== MAIN TRACKING FUNCTION =====
 async function trackWallet() {
+    // Verify token gate
+    if (typeof isGateVerified === 'function' && !isGateVerified()) {
+        showToast('Please verify your $GROKIE holdings first.');
+        return;
+    }
     const input = document.getElementById('walletInput');
     const address = input.value.trim();
 

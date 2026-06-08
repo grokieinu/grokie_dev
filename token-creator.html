@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create your own SPL token on Solana in seconds. Token-2022 with on-chain metadata, no coding required.">
     <title>Solana Token Creator | Grokie Inu</title>
     <link rel="icon" href="assets/images/grokie-inu.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -15,6 +16,14 @@
                 <img src="assets/images/grokie-inu.png" alt="Grokie Inu">
                 GROKIE
             </a>
+            <nav class="tool-nav">
+                <a href="swap.html">Swap</a>
+                <a href="ai-engine.html">Web Creator</a>
+                <a href="token-creator.html" class="active">Token Creator</a>
+                <a href="token-audit.html">Audit</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="whale-tracker.html">Whale</a>
+            </nav>
             <div class="header-right">
                 <button class="connect-btn-header" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
                 <a href="index.html" class="back-btn">← Back</a>
@@ -259,25 +268,21 @@
                     Phantom
                     <span class="wallet-recommended">Recommended</span>
                 </button>
-                <button class="wallet-option wallet-disabled" disabled>
+                <button class="wallet-option" onclick="connectSpecificWallet('solflare')">
                     <img src="assets/images/Solflare.png" alt="Solflare">
                     Solflare
-                    <span class="wallet-soon">Soon</span>
                 </button>
-                <button class="wallet-option wallet-disabled" disabled>
+                <button class="wallet-option" onclick="connectSpecificWallet('backpack')">
                     <img src="assets/images/Backpack.png" alt="Backpack">
                     Backpack
-                    <span class="wallet-soon">Soon</span>
                 </button>
-                <button class="wallet-option wallet-disabled" disabled>
+                <button class="wallet-option" onclick="connectSpecificWallet('coinbase')">
                     <img src="assets/images/coinbase.png" alt="Coinbase">
                     Coinbase Wallet
-                    <span class="wallet-soon">Soon</span>
                 </button>
-                <button class="wallet-option wallet-disabled" disabled>
+                <button class="wallet-option" onclick="connectSpecificWallet('trust')">
                     <img src="assets/images/trust.png" alt="Trust">
                     Trust Wallet
-                    <span class="wallet-soon">Soon</span>
                 </button>
             </div>
             <p class="wallet-modal-note">Don't have a wallet? <a href="https://phantom.app/" target="_blank">Get Phantom →</a></p>
@@ -316,16 +321,16 @@
     </div>
 
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script src="assets/js/keys.js"></script>
     <script src="assets/js/token-creator.js"></script>
     <script>
     // Solana Token Creation Logic
     async function createToken() {
-        var FEE_WALLET = String.fromCharCode(56,77,99,100,80,121,103,71,98,118,67,105,90,83,102,107,77,106,78,114,98,117,109,85,115,50,97,82,56,83,69,72,90,85,89,99,50,83,78,111,53,98,70,80);
-        var RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=d33d23ca-ca10-4b9b-b231-13043e8f53c5';
+        var FEE_WALLET = window.__gk ? window.__gk.fw() : '';
+        var RPC_URL = window.__gk ? window.__gk.r() : '';
 
         // Integrity check
-        var expectedWallet = String.fromCharCode(56,77,99,100,80,121,103,71,98,118,67,105,90,83,102,107,77,106,78,114,98,117,109,85,115,50,97,82,56,83,69,72,90,85,89,99,50,83,78,111,53,98,70,80);
-        if (FEE_WALLET !== expectedWallet) { showStatus('Integrity check failed.', 'error'); return; }
+        if (!FEE_WALLET || FEE_WALLET.length < 30) { showStatus('Security verification failed.', 'error'); return; }
 
         var name = document.getElementById('tokenName').value.trim();
         var symbol = document.getElementById('tokenSymbol').value.trim();

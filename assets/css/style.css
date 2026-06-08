@@ -297,6 +297,26 @@ h2 {
 .roadmap-item.active .roadmap-card { border-color: var(--cyan); box-shadow: 0 0 20px rgba(0,245,255,0.06); }
 .roadmap-item.active .roadmap-marker { background: linear-gradient(135deg, var(--cyan), var(--primary)); box-shadow: 0 3px 10px rgba(0,245,255,0.3); }
 
+/* ===== NEWS / BLOG ===== */
+.news-section { background: linear-gradient(180deg, var(--dark) 0%, rgba(12,12,32,0.8) 100%); border-top: 1px solid var(--border); }
+.news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.news-card {
+    display: block; text-decoration: none; color: var(--text);
+    background: var(--card); backdrop-filter: blur(12px);
+    border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; transition: all 0.3s; position: relative; overflow: hidden;
+}
+.news-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--primary)); opacity: 0;
+    transition: opacity 0.3s;
+}
+.news-card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
+.news-card:hover::before { opacity: 1; }
+.news-date { font-size: 0.7rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.news-card h3 { font-size: 0.95rem; font-weight: 700; margin: 8px 0; color: var(--text); line-height: 1.4; }
+.news-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.6; margin: 0; }
+
 /* ===== COMMUNITY ===== */
 .community-section { text-align: center; background: linear-gradient(180deg, rgba(12,12,32,0.5) 0%, var(--dark) 100%); border-top: 1px solid var(--border); }
 .community-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
@@ -319,6 +339,9 @@ h2 {
 .footer-brand span { font-weight: 800; color: var(--accent); font-size: 0.95rem; }
 .footer-disclaimer { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
 .footer-copy { font-size: 0.7rem; color: rgba(136,136,176,0.4); }
+.footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 16px; }
+.footer-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500; transition: color 0.2s; }
+.footer-links a:hover { color: var(--cyan); }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
