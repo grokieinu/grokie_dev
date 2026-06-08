@@ -54,7 +54,6 @@
                         <li><a href="#community">Community</a></li>
                     </ul>
                 </li>
-                <li><a href="swap.html" class="nav-swap-btn">🚀 Buy $GROKIE</a></li>
             </ul>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         </div>
@@ -165,17 +164,17 @@
                     <p>Instant AI security audit for any Solana token. Detect rugs before they happen.</p>
                 </a>
                 <a href="trending.html" class="tool-card">
-                    <img src="assets/images/grokie-inu.png" alt="Trending Coins">
+                    <img src="assets/images/trendingcoin.png" alt="Trending Coins">
                     <h3>Trending Coins</h3>
                     <p>Real-time trending Solana tokens with highest gains. Auto-refreshes every 10 seconds.</p>
                 </a>
                 <a href="new-pairs.html" class="tool-card">
-                    <img src="assets/images/grokie-inu.png" alt="New Pair Alert">
+                    <img src="assets/images/newpair.png" alt="New Pair Alert">
                     <h3>New Pair Alert</h3>
                     <p>Live feed of newly launched Solana tokens. Filter by liquidity, catch launches early.</p>
                 </a>
                 <a href="whale-tracker.html" class="tool-card">
-                    <img src="assets/images/grokie-inu.png" alt="Whale Tracker">
+                    <img src="assets/images/whaletracker.png" alt="Whale Tracker">
                     <h3>Whale Tracker</h3>
                     <p>Track top holders and whale activity for any Solana token in real-time.</p>
                 </a>
@@ -239,39 +238,42 @@
                         </ul>
                     </div>
                 </div>
-                <div class="roadmap-item active">
+                <div class="roadmap-item done">
                     <div class="roadmap-marker">Phase 2</div>
                     <div class="roadmap-card">
-                        <h3>Growth 🔄</h3>
+                        <h3>Platform Tools ✅</h3>
                         <ul>
-                            <li class="done">Token Creator launch ✅</li>
-                            <li class="done">Token Audit tool ✅</li>
-                            <li class="done">Portfolio Intelligence ✅</li>
-                            <li>LP Locker tool</li>
-                            <li>Advanced AI features</li>
+                            <li class="done">Token Creator (SPL & Token-2022) ✅</li>
+                            <li class="done">AI Token Audit & Security Scanner ✅</li>
+                            <li class="done">Portfolio Intelligence (AI-powered) ✅</li>
+                            <li class="done">Trending Coins (real-time) ✅</li>
+                            <li class="done">New Pair Alert ✅</li>
+                            <li class="done">Whale Tracker ✅</li>
                         </ul>
                     </div>
                 </div>
-                <div class="roadmap-item">
+                <div class="roadmap-item active">
                     <div class="roadmap-marker">Phase 3</div>
                     <div class="roadmap-card">
-                        <h3>Expansion</h3>
+                        <h3>Growth 🔄</h3>
                         <ul>
-                            <li>Grokie DAO governance</li>
-                            <li>Multi-chain expansion</li>
-                            <li>Mobile app</li>
-                            <li>Revenue sharing for holders</li>
+                            <li>LP Locker tool</li>
+                            <li>Advanced AI features</li>
+                            <li>Revenue sharing for $GROKIE stakers</li>
+                            <li>Apply for CoinGecko & CoinMarketCap</li>
+                            <li>Community governance & voting</li>
                         </ul>
                     </div>
                 </div>
                 <div class="roadmap-item">
                     <div class="roadmap-marker">Phase 4</div>
                     <div class="roadmap-card">
-                        <h3>Final Stage</h3>
+                        <h3>Expansion</h3>
                         <ul>
-                            <li>Partnership integrations</li>
-                            <li>Marketing & KOL campaigns</li>
-                            <li>CoinGecko & CMC listing</li>
+                            <li>Grokie Launchpad — fair launch platform</li>
+                            <li>Multi-chain expansion (Base, BSC)</li>
+                            <li>Mobile app</li>
+                            <li>Strategic partnerships</li>
                             <li>CEX listings (Tier 2 & Tier 1)</li>
                         </ul>
                     </div>
@@ -285,27 +287,40 @@
         <div class="container">
             <h2>Latest News</h2>
             <p class="section-subtitle">Updates from the Grokie team</p>
-            <div class="news-grid">
-                <a href="blog/blog-live-on-raydium.html" class="news-card">
-                    <span class="news-date">Live Now</span>
-                    <h3>$GROKIE is Live on Raydium</h3>
-                    <p>$GROKIE is officially live and trading on Raydium DEX. You can buy and sell right now.</p>
-                </a>
-                <a href="blog/blog-ai-engine-beta.html" class="news-card">
-                    <span class="news-date">May 2026</span>
-                    <h3>AI Engine Beta is Live</h3>
-                    <p>The beta version of our Web Creator is now available. Generate crypto project websites for free.</p>
-                </a>
-                <a href="blog/blog-launch-date.html" class="news-card">
-                    <span class="news-date">Coming Soon</span>
-                    <h3>Launch Date Confirmed: 07 July 2026</h3>
-                    <p>Fair launch on Pump.fun — no presale, no VCs, everyone gets equal opportunity.</p>
-                </a>
-                <a href="blog/blog-website-launched.html" class="news-card">
-                    <span class="news-date">May 2026</span>
-                    <h3>Grokie Inu Website Launched</h3>
-                    <p>The official website is live with all tools, tokenomics, and roadmap information.</p>
-                </a>
+            <div class="news-carousel-wrapper">
+                <div class="news-carousel" id="newsCarousel">
+                    <a href="blog/blog-token-creator-v2.html" class="news-card">
+                        <span class="news-date">June 2026</span>
+                        <h3>Token Creator v2: Dual Standard & IPFS</h3>
+                        <p>Choose SPL Token or Token-2022. Logo auto-uploads to IPFS and appears on all explorers and wallets.</p>
+                    </a>
+                    <a href="blog/blog-portfolio-intelligence.html" class="news-card">
+                        <span class="news-date">June 2026</span>
+                        <h3>Portfolio Intelligence is Live</h3>
+                        <p>AI-powered portfolio analytics with PnL tracking, risk score, whale detection, and tax reports.</p>
+                    </a>
+                    <a href="blog/blog-whale-tracker-trending.html" class="news-card">
+                        <span class="news-date">June 2026</span>
+                        <h3>Whale Tracker, Trending & New Pairs</h3>
+                        <p>Three new tools: track top holders, spot trending coins, and catch new launches in real-time.</p>
+                    </a>
+                    <a href="blog/blog-live-on-raydium.html" class="news-card">
+                        <span class="news-date">Live Now</span>
+                        <h3>$GROKIE is Live on Raydium</h3>
+                        <p>$GROKIE is officially live and trading on Raydium DEX. You can buy and sell right now.</p>
+                    </a>
+                    <a href="blog/blog-ai-engine-beta.html" class="news-card">
+                        <span class="news-date">May 2026</span>
+                        <h3>AI Engine Beta is Live</h3>
+                        <p>The beta version of our Web Creator is now available. Generate crypto project websites for free.</p>
+                    </a>
+                    <a href="blog/blog-website-launched.html" class="news-card">
+                        <span class="news-date">May 2026</span>
+                        <h3>Grokie Inu Website Launched</h3>
+                        <p>The official website is live with all tools, tokenomics, and roadmap information.</p>
+                    </a>
+                </div>
+                <div class="news-carousel-dots" id="carouselDots"></div>
             </div>
         </div>
     </section>

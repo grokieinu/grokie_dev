@@ -3,6 +3,16 @@
  * UI Logic: wallet connection, form handling, fee calculation
  */
 
+// Selected token standard
+var selectedStandard = 'token2022';
+
+// Select token standard
+function selectStandard(std) {
+    selectedStandard = std;
+    document.getElementById('stdToken2022').classList.toggle('selected', std === 'token2022');
+    document.getElementById('stdSPL').classList.toggle('selected', std === 'spl');
+}
+
 // Toggle social fields
 function toggleSocials() {
     var show = document.getElementById('optSocials').checked;
@@ -14,15 +24,18 @@ function updateFee() {
     var total = 0.05;
     var freezeChecked = document.getElementById('optFreeze').checked;
     var mintChecked = document.getElementById('optMint').checked;
+    var immutableChecked = document.getElementById('optImmutable').checked;
     var socialsChecked = document.getElementById('optSocials').checked;
 
     document.getElementById('feeFreeze').style.display = freezeChecked ? 'flex' : 'none';
     document.getElementById('feeMint').style.display = mintChecked ? 'flex' : 'none';
+    document.getElementById('feeImmutable').style.display = immutableChecked ? 'flex' : 'none';
     document.getElementById('feeSocials').style.display = socialsChecked ? 'flex' : 'none';
 
-    if (freezeChecked) total += 0.1;
-    if (mintChecked) total += 0.1;
-    if (socialsChecked) total += 0.1;
+    if (freezeChecked) total += 0.05;
+    if (mintChecked) total += 0.05;
+    if (immutableChecked) total += 0.05;
+    if (socialsChecked) total += 0.05;
 
     document.getElementById('feeTotal').textContent = '~' + total.toFixed(2) + ' SOL';
 }

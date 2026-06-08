@@ -43,6 +43,45 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// ===== News Carousel (Continuous Slow Scroll via CSS) =====
+(function() {
+    var carousel = document.getElementById('newsCarousel');
+    if (!carousel) return;
+
+    // Hide dots
+    var dotsContainer = document.getElementById('carouselDots');
+    if (dotsContainer) dotsContainer.style.display = 'none';
+
+    // Clone all cards for seamless infinite loop
+    var cards = carousel.querySelectorAll('.news-card');
+    for (var i = 0; i < cards.length; i++) {
+        var clone = cards[i].cloneNode(true);
+        carousel.appendChild(clone);
+    }
+
+    // Calculate total width of original cards
+    var totalWidth = 0;
+    for (var i = 0; i < cards.length; i++) {
+        totalWidth += cards[i].offsetWidth + 16; // card width + gap
+    }
+
+    // Apply CSS animation
+    carousel.style.animation = 'newsScroll ' + (totalWidth / 30) + 's linear infinite';
+
+    // Inject keyframe
+    var style = document.createElement('style');
+    style.textContent = '@keyframes newsScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-' + totalWidth + 'px); } }';
+    document.head.appendChild(style);
+
+    // Pause on hover
+    carousel.addEventListener('mouseenter', function() {
+        carousel.style.animationPlayState = 'paused';
+    });
+    carousel.addEventListener('mouseleave', function() {
+        carousel.style.animationPlayState = 'running';
+    });
+})();
+
 // ===== Live Price Data =====
 const GROKIE_MINT = window.__gk ? window.__gk.ca() : '';
 
